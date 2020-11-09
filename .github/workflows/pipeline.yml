@@ -3,7 +3,7 @@ name: Fantasy Sport API Pipeline
 on: [ push ]
 
 jobs:
-  build:
+  test-and-sonar:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube --info
+        run: ./gradlew jacocoTestReport sonarqube -x test --info
       - name: Acceptance tests
         run: ./gradlew acceptanceTest
