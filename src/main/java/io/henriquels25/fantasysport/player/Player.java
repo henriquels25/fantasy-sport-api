@@ -1,0 +1,17 @@
+package io.henriquels25.fantasysport.player;
+
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+@EqualsAndHashCode
+public class Player {
+
+    private final String name;
+    private final String position;
+    private final String team;
+
+}
