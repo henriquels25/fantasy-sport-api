@@ -1,0 +1,20 @@
+name: Fantasy Sport API Pipeline
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Unit tests
+        run: ./gradlew unitTest
+      - name: Integration tests
+        run: ./gradlew integrationTest
+      - name: Acceptance tests
+        run: ./gradlew acceptanceTest
