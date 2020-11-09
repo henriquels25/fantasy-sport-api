@@ -77,5 +77,6 @@ sonarqube {
         property "sonar.projectKey", "henriquels25_fantasy-sport-api"
         property "sonar.organization", "henriquels"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.exclusions", "**/FantasySportApiApplication.java"
     }
 }

@@ -16,7 +16,7 @@ class PlayerController {
     private final PlayerFacade playerFacade;
 
     @GetMapping
-    Flux<Player> allPlayers() {
+    public Flux<Player> allPlayers() {
         return playerFacade.allPlayers();
     }
 
