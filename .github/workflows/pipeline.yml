@@ -12,5 +12,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Unit tests
+        run: ./gradlew unitTest
+      - name: Integration tests
+        run: ./gradlew integrationTest
+      - name: Acceptance tests
+        run: ./gradlew acceptanceTest
