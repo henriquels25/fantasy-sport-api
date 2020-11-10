@@ -84,11 +84,9 @@ This project has three levels of testing:
 * **Unit test**: Cover the business logic of the modules. They are extremely fast and do not depend
 on any framework (other than JUnit5/Mockito), database or messaging system.
 
-* **Integration test**: Cover the primary and secondary adapters of the modules. Everything that is inside the package 
-`**.infra` may be tested in an integration test. These tests are slower than unit tests as it is needed an application context,
- a database or other technologies.
-For example, when testing a web controller, only components related to the controller being tested should be configured.
- Usually, annotation like `@WebFluxTest`, `@DataMongoTest` and others are used.
+* **Integration test**: Cover the adapters of the modules (everything inside the `infra` package).
+These tests are slower than unit tests as it is needed an application context, a database or other technologies.
+Usually, annotation like `@WebFluxTest`, `@DataMongoTest` and others are used.
  
 * **Acceptance test**: This kind of test configure the whole application with the external dependencies
  (Database, Messaging Systems, External APIs) locally and the tests are written from the client perspective, as use cases.
