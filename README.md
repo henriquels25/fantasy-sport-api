@@ -87,8 +87,7 @@ on any framework (other than JUnit5/Mockito), database or messaging system.
 * **Integration test**: Cover the primary and secondary adapters of the modules. Everything that is inside the package 
 `**.infra` may be tested in an integration test. These tests are slower than unit tests as it is needed an application context,
  a database or other technologies.
- In this kind of test, it should be setup only what is needed to. For example, when testing a web controller, only components
- related to the controller being tested should be configured.
+For example, when testing a web controller, only components related to the controller being tested should be configured.
  Usually, annotation like `@WebFluxTest`, `@DataMongoTest` and others are used.
  
 * **Acceptance test**: This kind of test configure the whole application with the external dependencies
