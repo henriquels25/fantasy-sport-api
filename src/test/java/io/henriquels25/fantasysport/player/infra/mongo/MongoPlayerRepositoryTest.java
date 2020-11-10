@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import reactor.test.StepVerifier;
 
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.fernando;
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.henrique;
+import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
 import static io.henriquels25.fantasysport.player.infra.mongo.MongoTestHelper.toDocument;
 
 @DataMongoTest
@@ -29,6 +28,21 @@ class MongoPlayerRepositoryTest {
         StepVerifier.create(mongoPlayerRepository.findAll())
                 .expectNext(henrique())
                 .expectNext(fernando())
+                .expectComplete()
+                .verify();
+    }
+
+    @IntegrationTest
+    void shouldSaveAPlayer() {
+        reactiveMongoTemplate.save(toDocument(henrique())).block();
+
+        StepVerifier.create(mongoPlayerRepository.save(diego())).
+                expectNextCount(1).
+                expectComplete().verify();
+
+        StepVerifier.create(mongoPlayerRepository.findAll())
+                .expectNext(henrique())
+                .expectNext(diego())
                 .expectComplete()
                 .verify();
     }

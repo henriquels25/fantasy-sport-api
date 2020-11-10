@@ -7,9 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.fernando;
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.henrique;
+import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +35,18 @@ class PlayerControllerTest {
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
                 .jsonPath("[1].team", equalTo("Barcelona"));
+    }
+
+    @IntegrationTest
+    void shouldSaveAPlayer() {
+        when(playerFacade.create(diego())).thenReturn(Mono.just("id1"));
+
+        webTestClient.post().uri("/players")
+                .bodyValue(diego())
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader()
+                .valueEquals("location", "/players/id1");
     }
 
 }

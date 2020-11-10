@@ -8,11 +8,12 @@ import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataM
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.fernando;
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.henrique;
+import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
 @AutoConfigureDataMongo
@@ -26,7 +27,7 @@ class PlayerAcceptanceTest {
     @Autowired
     private MongoTestHelper mongoTestHelper;
 
-    @DisplayName("As a user, I want to list the players")
+    @DisplayName("As a user, I want to list the players and add a new one")
     @AcceptanceTest
     void listPlayers() {
         mongoTestHelper.save(henrique()).block();
@@ -41,6 +42,17 @@ class PlayerAcceptanceTest {
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
                 .jsonPath("[1].team", equalTo("Barcelona"));
+
+        webClient.post().uri("/players")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(diego())
+                .exchange().expectStatus().isCreated();
+
+        webClient.get().uri("/players/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(3));
     }
 
 }
