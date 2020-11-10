@@ -1,6 +1,7 @@
 package io.henriquels25.fantasysport.player.infra.mongo;
 
 import io.henriquels25.fantasysport.annotations.IntegrationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
@@ -47,5 +48,9 @@ class MongoPlayerRepositoryTest {
                 .verify();
     }
 
+    @AfterEach
+    void cleanUp() {
+        reactiveMongoTemplate.dropCollection(PlayerDocument.class).block();
+    }
 
 }
