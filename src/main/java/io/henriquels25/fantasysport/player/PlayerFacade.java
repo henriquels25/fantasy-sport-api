@@ -3,6 +3,7 @@ package io.henriquels25.fantasysport.player;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Service
@@ -14,4 +15,7 @@ public class PlayerFacade {
         return playerRepository.findAll();
     }
 
+    public Mono<String> create(Player player) {
+        return playerRepository.save(player);
+    }
 }

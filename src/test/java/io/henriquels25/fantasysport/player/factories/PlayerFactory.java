@@ -12,4 +12,8 @@ public class PlayerFactory {
         return new Player("Fernando", "CF", "Barcelona");
     }
 
+    public static Player diego() {
+        return new Player("Diego", "CB", "Gremio");
+    }
+
 }

@@ -6,10 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.fernando;
-import static io.henriquels25.fantasysport.player.factories.PlayerFactory.henrique;
+import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +31,18 @@ class PlayerFacadeTest {
                 .expectNext(fernando())
                 .expectComplete()
                 .verify();
+    }
+
+    @Test
+    void shouldSaveANewPlayer() {
+        when(playerRepository.save(diego())).thenReturn(Mono.just("id1"));
+
+        StepVerifier.create(facade.create(diego()))
+                .expectNext("id1")
+                .expectComplete()
+                .verify();
+
+        verify(playerRepository).save(diego());
     }
 
 }
