@@ -111,9 +111,9 @@ The reports are available at the directory `build/reports/jacoco`.
 
 For example, in order to view the coverage from the unit and integration tests combined, the following commands should be executed:
 
-`./gradlew unitTest`
-`./gradlew integrationTest`
-`./gradlew jacocoTestReport`
+- `./gradlew unitTest`
+- `./gradlew integrationTest`
+- `./gradlew jacocoTestReport`
 
 ## Sonarcloud
 This project is available on [Sonarcloud](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api).
