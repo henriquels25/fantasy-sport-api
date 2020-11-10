@@ -92,14 +92,14 @@ on any framework (other than JUnit5/Mockito), database or messaging system.
  Usually, annotation like `@WebFluxTest`, `@DataMongoTest` and others are used.
  
 * **Acceptance test**: This kind of test configure the whole application with the external dependencies
- (Database, Messaging Systems, External APIs) and the tests are written from the client perspective, as use cases.
+ (Database, Messaging Systems, External APIs) locally and the tests are written from the client perspective, as use cases.
  Usually, the annotation `@SpringBootTest` is used for this kind of test.
 
 For code coverage purposes, only the unit and integration tests should be considered.
 
 ### Special Annotations
-In order to have separate tasks for each kind of test, the following annotations should be used
-as the test annotation:
+In order to have separate tasks for each kind of test, the following annotations should be used when defining
+tests:
 
 * **Unit Test**: `@Test` (org.junit.jupiter.api.Test)
 * **Integration Test**: `@IntegrationTest` (io.henriquels25.fantasysport.annotations.IntegrationTest)
