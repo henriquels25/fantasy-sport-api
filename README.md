@@ -44,27 +44,37 @@ adapters should implement secondary ports defined in the application core.
 ### Package organization
 The project is split into modules according to business use cases. Each module 
 has its own package inside the root package `io.henriquels25.fantasysport`.
+
 Example:
 The module responsible for managing the players is `io.henriquels25.fantasysport.player`.
 
+#### Business Logic (core)
+
 Inside a module, the code related to the business logic (core) is put in the
 root of the package.
+
 Example:
 The `PlayerFacade` is the entry point for the application core for the Player Module and it
 is placed on `io.henriquels25.fantasysport.player`.
 
+#### Adapters
 The adapters are placed in the package called `infra` inside the module.
+
 Example:
 The adapters for the player module are placed on `io.henriquels25.fantasysport.player.infra`.
 
 The adapters are placed on packages according to their types. Controllers are put on the
 package `**.infra.controller`, adapters to Mongo documents on `**.infra.mongo`, etc.
 
+##### Primary Adapters
 Primary adapters should depend on an entry point to the module business logic (core).
+
 Example:
 The primary adapter `PlayerController` depends on the `PlayerFacade` (entry point to the business logic).
 
+##### Secondary Adapters
 Secondary adapters should implement output ports that are defined in the module business logic (core).
+
 Example:
 The secondary adapter `MongoPlayerRepository` implements the secondary port `PlayerRepository`.
 
