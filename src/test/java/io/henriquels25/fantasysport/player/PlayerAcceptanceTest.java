@@ -88,6 +88,6 @@ class PlayerAcceptanceTest {
 
     @AfterEach
     void cleanUp() {
-        mongoTestHelper.dropPlayerCollection();
+        mongoTestHelper.dropPlayerCollection().block();
     }
 }
