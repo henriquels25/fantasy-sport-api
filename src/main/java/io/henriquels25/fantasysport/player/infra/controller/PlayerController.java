@@ -43,6 +43,11 @@ class PlayerController {
         return playerFacade.delete(id);
     }
 
+    @GetMapping("/{id}")
+    public Mono<PlayerDTO> findPlayerById(@PathVariable String id) {
+        return playerFacade.findById(id).map(PlayerDTO::fromPlayer);
+    }
+
     private void setLocationHeader(ServerHttpResponse response,
                                    UriComponentsBuilder uriComponentsBuilder,
                                    String id) {

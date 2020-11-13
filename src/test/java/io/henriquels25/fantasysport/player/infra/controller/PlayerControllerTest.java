@@ -72,4 +72,19 @@ class PlayerControllerTest {
 
         verify(playerFacade).delete("id1");
     }
+
+    @IntegrationTest
+    void shouldFindAPlayer() {
+        when(playerFacade.findById("id1")).thenReturn(Mono.just(henrique()));
+
+        webTestClient.get().uri("/players/{id}", "id1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Henrique")
+                .jsonPath("$.position").isEqualTo("GK")
+                .jsonPath("$.team").isEqualTo("Gremio");
+
+        verify(playerFacade).findById("id1");
+    }
 }

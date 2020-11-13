@@ -26,4 +26,8 @@ public class PlayerFacade {
     public Mono<Void> delete(String id) {
         return playerRepository.delete(id);
     }
+
+    public Mono<Player> findById(String id) {
+        return playerRepository.findById(id);
+    }
 }

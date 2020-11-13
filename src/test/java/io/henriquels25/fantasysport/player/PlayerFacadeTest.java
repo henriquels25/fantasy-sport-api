@@ -67,4 +67,15 @@ class PlayerFacadeTest {
 
         verify(playerRepository).delete("id1");
     }
+
+    @Test
+    void shouldFindAPlayerById() {
+        when(playerRepository.findById("id1")).thenReturn(Mono.just(henrique()));
+
+        StepVerifier.create(facade.findById("id1"))
+                .expectNext(henrique())
+                .verifyComplete();
+
+        verify(playerRepository).findById("id1");
+    }
 }
