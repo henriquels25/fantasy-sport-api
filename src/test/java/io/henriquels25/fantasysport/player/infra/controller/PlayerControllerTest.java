@@ -61,4 +61,15 @@ class PlayerControllerTest {
 
         verify(playerFacade).update("id1", diego());
     }
+
+    @IntegrationTest
+    void shouldDeleteAPlayer() {
+        when(playerFacade.delete("id1")).thenReturn(Mono.empty());
+
+        webTestClient.delete().uri("/players/{id}", "id1")
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(playerFacade).delete("id1");
+    }
 }

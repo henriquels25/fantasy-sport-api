@@ -86,6 +86,27 @@ class PlayerAcceptanceTest {
                 .jsonPath("[0].team").isEqualTo("Internacional");
     }
 
+    @DisplayName("As a user, I want to delete a player")
+    @AcceptanceTest
+    void deletePlayer() {
+        String idHenrique = mongoTestHelper.save(henrique()).block();
+        mongoTestHelper.save(fernando()).block();
+        webClient.get().uri("/players/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(2));
+
+        webClient.delete().uri("/players/{id}", idHenrique)
+                .exchange().expectStatus().isNoContent();
+
+        webClient.get().uri("/players/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(1));
+    }
+
     @AfterEach
     void cleanUp() {
         mongoTestHelper.dropPlayerCollection().block();

@@ -34,8 +34,13 @@ class PlayerController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> updatePlayer(@PathVariable String id, @RequestBody PlayerDTO player) {
-        return playerFacade.update(id, player.toPlayer())
-                .then();
+        return playerFacade.update(id, player.toPlayer());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deletePlayer(@PathVariable String id) {
+        return playerFacade.delete(id);
     }
 
     private void setLocationHeader(ServerHttpResponse response,

@@ -70,6 +70,27 @@ class MongoPlayerRepositoryTest {
                 .verify();
     }
 
+    @IntegrationTest
+    void shouldDeleteAPlayer() {
+        MongoTestHelper mongoTestHelper = new MongoTestHelper(reactiveMongoTemplate);
+        String id = mongoTestHelper.save(diego()).block();
+        mongoTestHelper.save(henrique()).block();
+
+        StepVerifier.create(mongoPlayerRepository.findAll())
+                .expectNext(diego())
+                .expectNext(henrique())
+                .expectComplete()
+                .verify();
+
+        StepVerifier.create(mongoPlayerRepository.delete(id)).
+                expectComplete().verify();
+
+        StepVerifier.create(mongoPlayerRepository.findAll())
+                .expectNext(henrique())
+                .expectComplete()
+                .verify();
+    }
+
     @AfterEach
     void cleanUp() {
         reactiveMongoTemplate.dropCollection(PlayerDocument.class).block();
