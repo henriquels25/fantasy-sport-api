@@ -107,6 +107,21 @@ class PlayerAcceptanceTest {
                 .jsonPath("$").value(hasSize(1));
     }
 
+    @DisplayName("As a user, I want to find a player by id")
+    @AcceptanceTest
+    void findPlayerById() {
+        String idHenrique = mongoTestHelper.save(henrique()).block();
+
+        webClient.get().uri("/players/{id}", idHenrique)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Henrique")
+                .jsonPath("$.position").isEqualTo("GK")
+                .jsonPath("$.team").isEqualTo("Gremio");
+    }
+
+
     @AfterEach
     void cleanUp() {
         mongoTestHelper.dropPlayerCollection().block();

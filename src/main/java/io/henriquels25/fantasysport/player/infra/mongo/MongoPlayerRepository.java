@@ -36,6 +36,11 @@ class MongoPlayerRepository implements PlayerRepository {
         return repository.deleteById(id);
     }
 
+    @Override
+    public Mono<Player> findById(String id) {
+        return repository.findById(id).map(this::toPlayer);
+    }
+
     private PlayerDocument toDocument(Player player) {
         PlayerDocument playerDocument = new PlayerDocument();
         playerDocument.setTeam(player.getTeam());

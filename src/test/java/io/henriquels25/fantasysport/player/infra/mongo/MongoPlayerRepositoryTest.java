@@ -91,6 +91,16 @@ class MongoPlayerRepositoryTest {
                 .verify();
     }
 
+    @IntegrationTest
+    void shouldFindAPlayerById() {
+        MongoTestHelper mongoTestHelper = new MongoTestHelper(reactiveMongoTemplate);
+        String id = mongoTestHelper.save(diego()).block();
+
+        StepVerifier.create(mongoPlayerRepository.findById(id))
+                .expectNext(diego())
+                .verifyComplete();
+    }
+
     @AfterEach
     void cleanUp() {
         reactiveMongoTemplate.dropCollection(PlayerDocument.class).block();

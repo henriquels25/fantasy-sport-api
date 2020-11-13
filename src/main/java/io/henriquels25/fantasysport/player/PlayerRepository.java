@@ -11,4 +11,6 @@ public interface PlayerRepository {
     Mono<Void> update(String id, Player player);
 
     Mono<Void> delete(String id);
+
+    Mono<Player> findById(String id);
 }
