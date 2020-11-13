@@ -9,4 +9,6 @@ public interface PlayerRepository {
     Mono<String> save(Player player);
 
     Mono<Void> update(String id, Player player);
+
+    Mono<Void> delete(String id);
 }

@@ -56,4 +56,15 @@ class PlayerFacadeTest {
         verify(playerRepository).update("id1", diego());
     }
 
+
+    @Test
+    void shouldDeleteAPlayer() {
+        when(playerRepository.delete("id1")).thenReturn(Mono.empty());
+
+        StepVerifier.create(facade.delete("id1"))
+                .expectComplete()
+                .verify();
+
+        verify(playerRepository).delete("id1");
+    }
 }

@@ -22,4 +22,8 @@ public class PlayerFacade {
     public Mono<Void> update(String id, Player player) {
         return playerRepository.update(id, player);
     }
+
+    public Mono<Void> delete(String id) {
+        return playerRepository.delete(id);
+    }
 }
