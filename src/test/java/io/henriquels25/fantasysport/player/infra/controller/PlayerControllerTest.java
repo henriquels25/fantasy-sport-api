@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(PlayerController.class)
@@ -49,4 +50,15 @@ class PlayerControllerTest {
                 .valueEquals("location", "/players/id1");
     }
 
+    @IntegrationTest
+    void shouldUpdateAPlayer() {
+        when(playerFacade.update("id1", diego())).thenReturn(Mono.empty());
+
+        webTestClient.put().uri("/players/{id}", "id1")
+                .bodyValue(diego())
+                .exchange()
+                .expectStatus().isNoContent();
+
+        verify(playerFacade).update("id1", diego());
+    }
 }

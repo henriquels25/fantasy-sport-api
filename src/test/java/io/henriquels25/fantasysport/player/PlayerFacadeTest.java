@@ -45,4 +45,15 @@ class PlayerFacadeTest {
         verify(playerRepository).save(diego());
     }
 
+    @Test
+    void shouldUpdateAPlayer() {
+        when(playerRepository.update("id1", diego())).thenReturn(Mono.empty());
+
+        StepVerifier.create(facade.update("id1", diego()))
+                .expectComplete()
+                .verify();
+
+        verify(playerRepository).update("id1", diego());
+    }
+
 }

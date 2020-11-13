@@ -7,4 +7,6 @@ public interface PlayerRepository {
     Flux<Player> findAll();
 
     Mono<String> save(Player player);
+
+    Mono<Void> update(String id, Player player);
 }

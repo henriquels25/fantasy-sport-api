@@ -2,6 +2,7 @@ package io.henriquels25.fantasysport.player;
 
 import io.henriquels25.fantasysport.annotations.AcceptanceTest;
 import io.henriquels25.fantasysport.player.infra.mongo.MongoTestHelper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
@@ -57,4 +58,36 @@ class PlayerAcceptanceTest {
                 .jsonPath("$").value(hasSize(3));
     }
 
+    @DisplayName("As a user, I want to update a player")
+    @AcceptanceTest
+    void updatePlayer() {
+        String id = mongoTestHelper.save(henrique()).block();
+        webClient.get().uri("/players/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(1))
+                .jsonPath("[0].name").isEqualTo("Henrique")
+                .jsonPath("[0].position").isEqualTo("GK")
+                .jsonPath("[0].team").isEqualTo("Gremio");
+
+        Player player = new Player("updatedName", "CF", "Internacional");
+
+        webClient.put().uri("/players/{id}", id).bodyValue(player)
+                .exchange().expectStatus().isNoContent();
+
+        webClient.get().uri("/players/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").value(hasSize(1))
+                .jsonPath("[0].name").isEqualTo("updatedName")
+                .jsonPath("[0].position").isEqualTo("CF")
+                .jsonPath("[0].team").isEqualTo("Internacional");
+    }
+
+    @AfterEach
+    void cleanUp() {
+        mongoTestHelper.dropPlayerCollection().block();
+    }
 }

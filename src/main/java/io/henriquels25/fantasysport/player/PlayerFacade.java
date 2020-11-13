@@ -18,4 +18,8 @@ public class PlayerFacade {
     public Mono<String> create(Player player) {
         return playerRepository.save(player);
     }
+
+    public Mono<Void> update(String id, Player player) {
+        return playerRepository.update(id, player);
+    }
 }
