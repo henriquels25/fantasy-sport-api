@@ -48,6 +48,28 @@ class MongoPlayerRepositoryTest {
                 .verify();
     }
 
+    @IntegrationTest
+    void shouldUpdateAPlayer() {
+        MongoTestHelper mongoTestHelper = new MongoTestHelper(reactiveMongoTemplate);
+        String id = mongoTestHelper.save(diego()).block();
+        mongoTestHelper.save(henrique()).block();
+
+        StepVerifier.create(mongoPlayerRepository.findAll())
+                .expectNext(diego())
+                .expectNext(henrique())
+                .expectComplete()
+                .verify();
+
+        StepVerifier.create(mongoPlayerRepository.update(id, fernando())).
+                expectComplete().verify();
+
+        StepVerifier.create(mongoPlayerRepository.findAll())
+                .expectNext(fernando())
+                .expectNext(henrique())
+                .expectComplete()
+                .verify();
+    }
+
     @AfterEach
     void cleanUp() {
         reactiveMongoTemplate.dropCollection(PlayerDocument.class).block();

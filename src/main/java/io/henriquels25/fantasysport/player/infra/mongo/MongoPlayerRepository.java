@@ -24,6 +24,13 @@ class MongoPlayerRepository implements PlayerRepository {
                 .map(PlayerDocument::getId);
     }
 
+    @Override
+    public Mono<Void> update(String id, Player player) {
+        PlayerDocument playerDocument = toDocument(player);
+        playerDocument.setId(id);
+        return repository.save(playerDocument).then();
+    }
+
     private PlayerDocument toDocument(Player player) {
         PlayerDocument playerDocument = new PlayerDocument();
         playerDocument.setTeam(player.getTeam());

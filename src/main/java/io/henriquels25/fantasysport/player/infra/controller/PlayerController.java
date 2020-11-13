@@ -31,6 +31,13 @@ class PlayerController {
                 .then();
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> updatePlayer(@PathVariable String id, @RequestBody PlayerDTO player) {
+        return playerFacade.update(id, player.toPlayer())
+                .then();
+    }
+
     private void setLocationHeader(ServerHttpResponse response,
                                    UriComponentsBuilder uriComponentsBuilder,
                                    String id) {
