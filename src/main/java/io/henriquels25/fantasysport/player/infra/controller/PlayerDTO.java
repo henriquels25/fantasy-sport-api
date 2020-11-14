@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 class PlayerDTO {
+    private String id;
     private String name;
     private String position;
     private String team;
@@ -18,6 +19,7 @@ class PlayerDTO {
         playerDTO.setName(player.getName());
         playerDTO.setPosition(player.getPosition());
         playerDTO.setTeam(player.getTeam());
+        playerDTO.setId(player.getId());
         return playerDTO;
     }
 }

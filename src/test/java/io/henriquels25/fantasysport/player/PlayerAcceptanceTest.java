@@ -31,17 +31,19 @@ class PlayerAcceptanceTest {
     @DisplayName("As a user, I want to list the players and add a new one")
     @AcceptanceTest
     void listPlayers() {
-        mongoTestHelper.save(henrique()).block();
-        mongoTestHelper.save(fernando()).block();
+        String idHenrique = mongoTestHelper.save(henrique()).block();
+        String idFernando = mongoTestHelper.save(fernando()).block();
 
         webClient.get().uri("/players/")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$").value(hasSize(2))
+                .jsonPath("[0].id").isEqualTo(idHenrique)
                 .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
                 .jsonPath("[0].team").isEqualTo("Gremio")
+                .jsonPath("[1].id").isEqualTo(idFernando)
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
                 .jsonPath("[1].team", equalTo("Barcelona"));
@@ -116,6 +118,7 @@ class PlayerAcceptanceTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
+                .jsonPath("$.id").isEqualTo(idHenrique)
                 .jsonPath("$.name").isEqualTo("Henrique")
                 .jsonPath("$.position").isEqualTo("GK")
                 .jsonPath("$.team").isEqualTo("Gremio");
