@@ -50,6 +50,7 @@ class MongoPlayerRepository implements PlayerRepository {
     }
 
     private Player toPlayer(PlayerDocument document) {
-        return new Player(document.getName(), document.getPosition(), document.getTeam());
+        return new Player(document.getId(), document.getName(),
+                document.getPosition(), document.getTeam());
     }
 }

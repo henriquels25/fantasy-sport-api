@@ -30,17 +30,20 @@ class PlayerControllerTest {
         webTestClient.get().uri("/players")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("[0].name").isEqualTo("Henrique")
+                .expectBody()
+                .jsonPath("[0].id").isEqualTo("idHenrique")
+                .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
                 .jsonPath("[0].team").isEqualTo("Gremio")
+                .jsonPath("[1].id").isEqualTo("idFernando")
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
                 .jsonPath("[1].team", equalTo("Barcelona"));
     }
 
     @IntegrationTest
-    void shouldSaveAPlayer() {
-        when(playerFacade.create(diego())).thenReturn(Mono.just("id1"));
+    void shouldCreateAPlayer() {
+        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.just("id1"));
 
         webTestClient.post().uri("/players")
                 .bodyValue(diego())
@@ -52,14 +55,14 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldUpdateAPlayer() {
-        when(playerFacade.update("id1", diego())).thenReturn(Mono.empty());
+        when(playerFacade.update("id1", diegoWithId(null))).thenReturn(Mono.empty());
 
         webTestClient.put().uri("/players/{id}", "id1")
                 .bodyValue(diego())
                 .exchange()
                 .expectStatus().isNoContent();
 
-        verify(playerFacade).update("id1", diego());
+        verify(playerFacade).update("id1", diegoWithId(null));
     }
 
     @IntegrationTest
@@ -75,16 +78,17 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldFindAPlayer() {
-        when(playerFacade.findById("id1")).thenReturn(Mono.just(henrique()));
+        when(playerFacade.findById("idHenrique")).thenReturn(Mono.just(henrique()));
 
-        webTestClient.get().uri("/players/{id}", "id1")
+        webTestClient.get().uri("/players/{id}", "idHenrique")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
+                .jsonPath("$.id").isEqualTo("idHenrique")
                 .jsonPath("$.name").isEqualTo("Henrique")
                 .jsonPath("$.position").isEqualTo("GK")
                 .jsonPath("$.team").isEqualTo("Gremio");
 
-        verify(playerFacade).findById("id1");
+        verify(playerFacade).findById("idHenrique");
     }
 }

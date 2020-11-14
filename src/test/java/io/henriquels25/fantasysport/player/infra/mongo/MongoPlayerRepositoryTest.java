@@ -1,6 +1,7 @@
 package io.henriquels25.fantasysport.player.infra.mongo;
 
 import io.henriquels25.fantasysport.annotations.IntegrationTest;
+import io.henriquels25.fantasysport.player.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -23,27 +24,29 @@ class MongoPlayerRepositoryTest {
 
     @IntegrationTest
     void shouldReturnAllPlayers() {
-        reactiveMongoTemplate.save(toDocument(henrique())).block();
-        reactiveMongoTemplate.save(toDocument(fernando())).block();
+        PlayerDocument savedHenrique = reactiveMongoTemplate.save(toDocument(henrique())).block();
+        PlayerDocument savedFernando = reactiveMongoTemplate.save(toDocument(fernando())).block();
+
+        Player expectedHenrique = toPlayer(savedHenrique);
+        Player expectedFernando = toPlayer(savedFernando);
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(henrique())
-                .expectNext(fernando())
+                .expectNext(expectedHenrique)
+                .expectNext(expectedFernando)
                 .expectComplete()
                 .verify();
     }
 
     @IntegrationTest
     void shouldSaveAPlayer() {
-        reactiveMongoTemplate.save(toDocument(henrique())).block();
+        Player savedHenrique = toPlayer(reactiveMongoTemplate.save(toDocument(henrique())).block());
 
-        StepVerifier.create(mongoPlayerRepository.save(diego())).
-                expectNextCount(1).
-                expectComplete().verify();
+        String diegoId = mongoPlayerRepository.save(diego()).block();
+        Player savedDiego = diegoWithId(diegoId);
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(henrique())
-                .expectNext(diego())
+                .expectNext(savedHenrique)
+                .expectNext(savedDiego)
                 .expectComplete()
                 .verify();
     }
@@ -51,21 +54,24 @@ class MongoPlayerRepositoryTest {
     @IntegrationTest
     void shouldUpdateAPlayer() {
         MongoTestHelper mongoTestHelper = new MongoTestHelper(reactiveMongoTemplate);
-        String id = mongoTestHelper.save(diego()).block();
-        mongoTestHelper.save(henrique()).block();
+        String diegoId = mongoTestHelper.save(diego()).block();
+        String henriqueId = mongoTestHelper.save(henrique()).block();
+        Player savedDiego = diegoWithId(diegoId);
+        Player savedHenrique = henriqueWithId(henriqueId);
+
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(diego())
-                .expectNext(henrique())
+                .expectNext(savedDiego)
+                .expectNext(savedHenrique)
                 .expectComplete()
                 .verify();
 
-        StepVerifier.create(mongoPlayerRepository.update(id, fernando())).
+        StepVerifier.create(mongoPlayerRepository.update(diegoId, fernando())).
                 expectComplete().verify();
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(fernando())
-                .expectNext(henrique())
+                .expectNext(fernandoWithId(diegoId))
+                .expectNext(savedHenrique)
                 .expectComplete()
                 .verify();
     }
@@ -73,20 +79,22 @@ class MongoPlayerRepositoryTest {
     @IntegrationTest
     void shouldDeleteAPlayer() {
         MongoTestHelper mongoTestHelper = new MongoTestHelper(reactiveMongoTemplate);
-        String id = mongoTestHelper.save(diego()).block();
-        mongoTestHelper.save(henrique()).block();
+        String diegoId = mongoTestHelper.save(diego()).block();
+        String henriqueId = mongoTestHelper.save(henrique()).block();
+        Player savedDiego = diegoWithId(diegoId);
+        Player savedHenrique = henriqueWithId(henriqueId);
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(diego())
-                .expectNext(henrique())
+                .expectNext(savedDiego)
+                .expectNext(savedHenrique)
                 .expectComplete()
                 .verify();
 
-        StepVerifier.create(mongoPlayerRepository.delete(id)).
+        StepVerifier.create(mongoPlayerRepository.delete(diegoId)).
                 expectComplete().verify();
 
         StepVerifier.create(mongoPlayerRepository.findAll())
-                .expectNext(henrique())
+                .expectNext(savedHenrique)
                 .expectComplete()
                 .verify();
     }
@@ -97,13 +105,18 @@ class MongoPlayerRepositoryTest {
         String id = mongoTestHelper.save(diego()).block();
 
         StepVerifier.create(mongoPlayerRepository.findById(id))
-                .expectNext(diego())
+                .expectNext(diegoWithId(id))
                 .verifyComplete();
     }
 
     @AfterEach
     void cleanUp() {
         reactiveMongoTemplate.dropCollection(PlayerDocument.class).block();
+    }
+
+    private Player toPlayer(PlayerDocument document) {
+        return new Player(document.getId(), document.getName(),
+                document.getPosition(), document.getTeam());
     }
 
 }
