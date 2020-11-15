@@ -13,7 +13,7 @@ import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
 import static io.henriquels25.fantasysport.player.infra.mongo.MongoTestHelper.toDocument;
 
 @DataMongoTest
-@Import(MongoPlayerRepository.class)
+@Import({MongoPlayerRepository.class, PlayerDocumentMapperImpl.class})
 class MongoPlayerRepositoryTest {
 
     @Autowired

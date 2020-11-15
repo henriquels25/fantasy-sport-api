@@ -50,7 +50,7 @@ class PlayerAcceptanceTest {
 
         webClient.post().uri("/players")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(diego())
+                .bodyValue(diegoWithId(null))
                 .exchange().expectStatus().isCreated();
 
         webClient.get().uri("/players/")
@@ -73,7 +73,7 @@ class PlayerAcceptanceTest {
                 .jsonPath("[0].position").isEqualTo("GK")
                 .jsonPath("[0].team").isEqualTo("Gremio");
 
-        Player player = new Player("updatedName", "CF", "Internacional");
+        Player player = new Player(null, "updatedName", "CF", "Internacional");
 
         webClient.put().uri("/players/{id}", id).bodyValue(player)
                 .exchange().expectStatus().isNoContent();
