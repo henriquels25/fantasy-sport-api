@@ -7,6 +7,7 @@ import io.henriquels25.fantasysport.player.PlayerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @WebFluxTest(PlayerController.class)
+@Import(PlayerMapperImpl.class)
 class PlayerControllerTest {
 
     @Autowired
@@ -47,7 +49,7 @@ class PlayerControllerTest {
         when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.just("id1"));
 
         webTestClient.post().uri("/players")
-                .bodyValue(diego())
+                .bodyValue(diegoWithId(null))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader()
@@ -59,7 +61,7 @@ class PlayerControllerTest {
         when(playerFacade.update("id1", diegoWithId(null))).thenReturn(Mono.empty());
 
         webTestClient.put().uri("/players/{id}", "id1")
-                .bodyValue(diego())
+                .bodyValue(diegoWithId(null))
                 .exchange()
                 .expectStatus().isNoContent();
 
@@ -95,7 +97,7 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldNotCreateAPlayerWithoutName() {
-        Player playerWithoutName = new Player(null, "CF", "Gremio");
+        Player playerWithoutName = new Player(null, null, "CF", "Gremio");
 
         webTestClient
                 .post().uri("/players")
@@ -114,7 +116,7 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldNotCreateAPlayerWithoutPositionAndTeam() {
-        Player invalidPlayer = new Player("Henrique", null, null);
+        Player invalidPlayer = new Player(null, "Henrique", null, null);
         ErrorTestDTO.ErrorTestDetailDTO positionError =
                 new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
         ErrorTestDTO.ErrorTestDetailDTO teamError =
@@ -134,7 +136,7 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldNotUpdateAPlayerWithoutPositionAndName() {
-        Player invalidPlayer = new Player(null, null, "Gremio");
+        Player invalidPlayer = new Player(null, null, null, "Gremio");
         ErrorTestDTO.ErrorTestDetailDTO positionError =
                 new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
         ErrorTestDTO.ErrorTestDetailDTO nameError =
@@ -148,6 +150,41 @@ class PlayerControllerTest {
                 .expectBody(ErrorTestDTO.class)
                 .value(ErrorTestDTO::getCode, equalTo("field_validation_error"))
                 .value(ErrorTestDTO::getDetails, containsInAnyOrder(nameError, positionError));
+
+        verifyNoInteractions(playerFacade);
+    }
+
+
+    @IntegrationTest
+    void shouldNotCreateAPlayerWithId() {
+        webTestClient
+                .post().uri("/players")
+                .bodyValue(diego())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("field_validation_error")
+                .jsonPath("$.description").doesNotExist()
+                .jsonPath("$.details").value(hasSize(1))
+                .jsonPath("$.details[0].name").isEqualTo("id")
+                .jsonPath("$.details[0].description").isEqualTo("must be null");
+
+        verifyNoInteractions(playerFacade);
+    }
+
+    @IntegrationTest
+    void shouldNotUpdateAPlayerWithId() {
+        webTestClient
+                .put().uri("/players/id1")
+                .bodyValue(diego())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("field_validation_error")
+                .jsonPath("$.description").doesNotExist()
+                .jsonPath("$.details").value(hasSize(1))
+                .jsonPath("$.details[0].name").isEqualTo("id")
+                .jsonPath("$.details[0].description").isEqualTo("must be null");
 
         verifyNoInteractions(playerFacade);
     }

@@ -17,10 +17,11 @@ import javax.validation.Valid;
 class PlayerController {
 
     private final PlayerFacade playerFacade;
+    private final PlayerMapper mapper;
 
     @GetMapping
     public Flux<PlayerDTO> allPlayers() {
-        return playerFacade.allPlayers().map(PlayerDTO::fromPlayer);
+        return playerFacade.allPlayers().map(mapper::toPlayerDTO);
     }
 
     @PostMapping
@@ -28,7 +29,7 @@ class PlayerController {
     public Mono<Void> savePlayer(@RequestBody @Valid PlayerDTO player,
                                  ServerHttpResponse response,
                                  UriComponentsBuilder uriComponentsBuilder) {
-        return playerFacade.create(player.toPlayer())
+        return playerFacade.create(mapper.toPlayer(player))
                 .doOnNext(id -> setLocationHeader(response, uriComponentsBuilder, id))
                 .then();
     }
@@ -36,7 +37,7 @@ class PlayerController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> updatePlayer(@PathVariable String id, @RequestBody @Valid PlayerDTO player) {
-        return playerFacade.update(id, player.toPlayer());
+        return playerFacade.update(id, mapper.toPlayer(player));
     }
 
     @DeleteMapping("/{id}")
@@ -47,7 +48,7 @@ class PlayerController {
 
     @GetMapping("/{id}")
     public Mono<PlayerDTO> findPlayerById(@PathVariable String id) {
-        return playerFacade.findById(id).map(PlayerDTO::fromPlayer);
+        return playerFacade.findById(id).map(mapper::toPlayerDTO);
     }
 
     private void setLocationHeader(ServerHttpResponse response,

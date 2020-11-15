@@ -10,13 +10,6 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class Player {
 
-    public Player(String name, String position, String team) {
-        this.name = name;
-        this.position = position;
-        this.team = team;
-        this.id = null;
-    }
-
     private final String id;
     private final String name;
     private final String position;

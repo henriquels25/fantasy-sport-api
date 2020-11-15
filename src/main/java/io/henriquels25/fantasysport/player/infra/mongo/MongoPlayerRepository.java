@@ -12,21 +12,22 @@ import reactor.core.publisher.Mono;
 class MongoPlayerRepository implements PlayerRepository {
 
     private final PlayerReactiveRepository repository;
+    private final PlayerDocumentMapper mapper;
 
     @Override
     public Flux<Player> findAll() {
-        return repository.findAll().map(this::toPlayer);
+        return repository.findAll().map(mapper::toPlayer);
     }
 
     @Override
     public Mono<String> save(Player player) {
-        return repository.save(toDocument(player))
+        return repository.save(mapper.toPlayerDocument(player))
                 .map(PlayerDocument::getId);
     }
 
     @Override
     public Mono<Void> update(String id, Player player) {
-        PlayerDocument playerDocument = toDocument(player);
+        PlayerDocument playerDocument = mapper.toPlayerDocument(player);
         playerDocument.setId(id);
         return repository.save(playerDocument).then();
     }
@@ -38,19 +39,6 @@ class MongoPlayerRepository implements PlayerRepository {
 
     @Override
     public Mono<Player> findById(String id) {
-        return repository.findById(id).map(this::toPlayer);
-    }
-
-    private PlayerDocument toDocument(Player player) {
-        PlayerDocument playerDocument = new PlayerDocument();
-        playerDocument.setTeam(player.getTeam());
-        playerDocument.setPosition(player.getPosition());
-        playerDocument.setName(player.getName());
-        return playerDocument;
-    }
-
-    private Player toPlayer(PlayerDocument document) {
-        return new Player(document.getId(), document.getName(),
-                document.getPosition(), document.getTeam());
+        return repository.findById(id).map(mapper::toPlayer);
     }
 }
