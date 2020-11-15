@@ -38,3 +38,5 @@ out/
 
 *.DS_Store
 .java-version
+
+src/main/generated/
