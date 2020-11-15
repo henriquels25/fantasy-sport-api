@@ -1,6 +1,8 @@
 package io.henriquels25.fantasysport.player.infra.controller;
 
 import io.henriquels25.fantasysport.annotations.IntegrationTest;
+import io.henriquels25.fantasysport.infra.ErrorTestDTO;
+import io.henriquels25.fantasysport.player.Player;
 import io.henriquels25.fantasysport.player.PlayerFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -10,9 +12,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @WebFluxTest(PlayerController.class)
 class PlayerControllerTest {
@@ -90,5 +91,64 @@ class PlayerControllerTest {
                 .jsonPath("$.team").isEqualTo("Gremio");
 
         verify(playerFacade).findById("idHenrique");
+    }
+
+    @IntegrationTest
+    void shouldNotCreateAPlayerWithoutName() {
+        Player playerWithoutName = new Player(null, "CF", "Gremio");
+
+        webTestClient
+                .post().uri("/players")
+                .bodyValue(playerWithoutName)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("field_validation_error")
+                .jsonPath("$.description").doesNotExist()
+                .jsonPath("$.details").value(hasSize(1))
+                .jsonPath("$.details[0].name").isEqualTo("name")
+                .jsonPath("$.details[0].description").isEqualTo("must not be empty");
+
+        verifyNoInteractions(playerFacade);
+    }
+
+    @IntegrationTest
+    void shouldNotCreateAPlayerWithoutPositionAndTeam() {
+        Player invalidPlayer = new Player("Henrique", null, null);
+        ErrorTestDTO.ErrorTestDetailDTO positionError =
+                new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
+        ErrorTestDTO.ErrorTestDetailDTO teamError =
+                new ErrorTestDTO.ErrorTestDetailDTO("team", "must not be empty");
+
+        webTestClient
+                .post().uri("/players")
+                .bodyValue(invalidPlayer)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorTestDTO.class)
+                .value(ErrorTestDTO::getCode, equalTo("field_validation_error"))
+                .value(ErrorTestDTO::getDetails, containsInAnyOrder(teamError, positionError));
+
+        verifyNoInteractions(playerFacade);
+    }
+
+    @IntegrationTest
+    void shouldNotUpdateAPlayerWithoutPositionAndName() {
+        Player invalidPlayer = new Player(null, null, "Gremio");
+        ErrorTestDTO.ErrorTestDetailDTO positionError =
+                new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
+        ErrorTestDTO.ErrorTestDetailDTO nameError =
+                new ErrorTestDTO.ErrorTestDetailDTO("name", "must not be empty");
+
+        webTestClient
+                .put().uri("/players/id1")
+                .bodyValue(invalidPlayer)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorTestDTO.class)
+                .value(ErrorTestDTO::getCode, equalTo("field_validation_error"))
+                .value(ErrorTestDTO::getDetails, containsInAnyOrder(nameError, positionError));
+
+        verifyNoInteractions(playerFacade);
     }
 }

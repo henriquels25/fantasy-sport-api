@@ -9,6 +9,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/players")
 @AllArgsConstructor
@@ -23,7 +25,7 @@ class PlayerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Void> savePlayer(@RequestBody PlayerDTO player,
+    public Mono<Void> savePlayer(@RequestBody @Valid PlayerDTO player,
                                  ServerHttpResponse response,
                                  UriComponentsBuilder uriComponentsBuilder) {
         return playerFacade.create(player.toPlayer())
@@ -33,7 +35,7 @@ class PlayerController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> updatePlayer(@PathVariable String id, @RequestBody PlayerDTO player) {
+    public Mono<Void> updatePlayer(@PathVariable String id, @RequestBody @Valid PlayerDTO player) {
         return playerFacade.update(id, player.toPlayer());
     }
 
