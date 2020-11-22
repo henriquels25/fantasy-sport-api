@@ -10,12 +10,10 @@ import reactor.core.publisher.Mono;
 @Component
 class RestTeamClient implements TeamClient {
     private final WebClient webClient;
-    private final String baseUrl;
 
     public RestTeamClient(WebClient.Builder webClientBuilder,
                           @Value("${services.teams.url}") String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
-        this.baseUrl = baseUrl;
     }
 
     @Override
