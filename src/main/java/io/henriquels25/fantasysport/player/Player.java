@@ -13,6 +13,6 @@ public class Player {
     private final String id;
     private final String name;
     private final String position;
-    private final String team;
+    private final String teamId;
 
 }

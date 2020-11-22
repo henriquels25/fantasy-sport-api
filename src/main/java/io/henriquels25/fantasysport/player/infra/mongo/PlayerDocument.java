@@ -13,5 +13,5 @@ class PlayerDocument {
 
     private String name;
     private String position;
-    private String team;
+    private String teamId;
 }

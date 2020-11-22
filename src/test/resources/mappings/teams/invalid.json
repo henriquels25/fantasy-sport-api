@@ -1,0 +1,8 @@
+{
+  "request": {
+    "urlPath": "/teams/idInvalid"
+  },
+  "response": {
+    "status": 404
+  }
+}

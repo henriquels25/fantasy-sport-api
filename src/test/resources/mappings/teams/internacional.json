@@ -1,0 +1,16 @@
+{
+  "request": {
+    "urlPath": "/teams/idInternacional"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "idInternacional",
+      "name": "Internacional",
+      "city": "Porto Alegre"
+    }
+  }
+}

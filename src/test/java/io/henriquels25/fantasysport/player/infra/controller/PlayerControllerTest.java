@@ -4,10 +4,13 @@ import io.henriquels25.fantasysport.annotations.IntegrationTest;
 import io.henriquels25.fantasysport.infra.ErrorTestDTO;
 import io.henriquels25.fantasysport.player.Player;
 import io.henriquels25.fantasysport.player.PlayerFacade;
+import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
+import io.henriquels25.fantasysport.player.exception.TeamServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,11 +40,11 @@ class PlayerControllerTest {
                 .jsonPath("[0].id").isEqualTo("idHenrique")
                 .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
-                .jsonPath("[0].team").isEqualTo("Gremio")
+                .jsonPath("[0].teamId").isEqualTo("idGremio")
                 .jsonPath("[1].id").isEqualTo("idFernando")
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
-                .jsonPath("[1].team", equalTo("Barcelona"));
+                .jsonPath("[1].teamId", equalTo("idBarcelona"));
     }
 
     @IntegrationTest
@@ -90,7 +93,7 @@ class PlayerControllerTest {
                 .jsonPath("$.id").isEqualTo("idHenrique")
                 .jsonPath("$.name").isEqualTo("Henrique")
                 .jsonPath("$.position").isEqualTo("GK")
-                .jsonPath("$.team").isEqualTo("Gremio");
+                .jsonPath("$.teamId").isEqualTo("idGremio");
 
         verify(playerFacade).findById("idHenrique");
     }
@@ -120,7 +123,7 @@ class PlayerControllerTest {
         ErrorTestDTO.ErrorTestDetailDTO positionError =
                 new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
         ErrorTestDTO.ErrorTestDetailDTO teamError =
-                new ErrorTestDTO.ErrorTestDetailDTO("team", "must not be empty");
+                new ErrorTestDTO.ErrorTestDetailDTO("teamId", "must not be empty");
 
         webTestClient
                 .post().uri("/players")
@@ -187,5 +190,32 @@ class PlayerControllerTest {
                 .jsonPath("$.details[0].description").isEqualTo("must be null");
 
         verifyNoInteractions(playerFacade);
+    }
+
+    @IntegrationTest
+    void shouldReturn503WhenTeamServiceIsUnavailable() {
+        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(TeamServiceUnavailableException::new));
+
+        webTestClient.post().uri("/players")
+                .bodyValue(diegoWithId(null))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.SERVICE_UNAVAILABLE)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("team_api_unavailable")
+                .jsonPath("$.description").isEqualTo("Teams API is not available");
+    }
+
+    @IntegrationTest
+    void shouldReturn400WhenTeamDoesNotExist() {
+        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(() ->
+                new TeamNotExistsException("Team test does not exist")));
+
+        webTestClient.post().uri("/players")
+                .bodyValue(diegoWithId(null))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("invalid_team")
+                .jsonPath("$.description").isEqualTo("Team test does not exist");
     }
 }

@@ -27,7 +27,7 @@ public class MongoTestHelper {
         PlayerDocument playerDocument = new PlayerDocument();
         playerDocument.setName(player.getName());
         playerDocument.setPosition(player.getPosition());
-        playerDocument.setTeam(player.getTeam());
+        playerDocument.setTeamId(player.getTeamId());
         return playerDocument;
     }
 }
