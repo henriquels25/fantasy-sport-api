@@ -45,7 +45,7 @@ dependencies {
     }
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
-    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner' {
+    testImplementation('org.springframework.cloud:spring-cloud-starter-contract-stub-runner') {
         exclude group: 'com.github.tomakehurst', module: 'wiremock-standalone'
     }
     testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.27.2")
