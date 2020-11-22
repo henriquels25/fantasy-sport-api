@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -19,6 +20,7 @@ import static org.hamcrest.Matchers.hasSize;
 @SpringBootTest
 @AutoConfigureDataMongo
 @AutoConfigureWebTestClient
+@AutoConfigureWireMock(port = 0)
 @Import(MongoTestHelper.class)
 class PlayerAcceptanceTest {
 

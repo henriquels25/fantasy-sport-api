@@ -1,0 +1,16 @@
+{
+  "request": {
+    "urlPath": "/teams/Barcelona"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "idBarcelona",
+      "name": "Barcelona",
+      "city": "Barcelona"
+    }
+  }
+}

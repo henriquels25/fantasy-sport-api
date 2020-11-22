@@ -1,0 +1,16 @@
+{
+  "request": {
+    "urlPath": "/teams/Gremio"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "idGremio",
+      "name": "Gremio",
+      "city": "Porto Alegre"
+    }
+  }
+}

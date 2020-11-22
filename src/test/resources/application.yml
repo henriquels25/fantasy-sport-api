@@ -1,0 +1,3 @@
+services:
+  teams:
+    url: http://localhost:${wiremock.server.port}/

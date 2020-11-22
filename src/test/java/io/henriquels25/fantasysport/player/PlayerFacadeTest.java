@@ -1,5 +1,7 @@
 package io.henriquels25.fantasysport.player;
 
+import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
+import io.henriquels25.fantasysport.player.infra.client.TeamClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,14 +12,16 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static io.henriquels25.fantasysport.player.factories.PlayerFactory.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerFacadeTest {
 
     @Mock
     private PlayerRepository playerRepository;
+
+    @Mock
+    private TeamClient teamClient;
 
     @InjectMocks
     private PlayerFacade facade;
@@ -35,6 +39,8 @@ class PlayerFacadeTest {
 
     @Test
     void shouldSaveANewPlayer() {
+        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(true));
+
         when(playerRepository.save(diego())).thenReturn(Mono.just("id1"));
 
         StepVerifier.create(facade.create(diego()))
@@ -47,6 +53,8 @@ class PlayerFacadeTest {
 
     @Test
     void shouldUpdateAPlayer() {
+        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(true));
+
         when(playerRepository.update("id1", diego())).thenReturn(Mono.empty());
 
         StepVerifier.create(facade.update("id1", diego()))
@@ -77,5 +85,31 @@ class PlayerFacadeTest {
                 .verifyComplete();
 
         verify(playerRepository).findById("id1");
+    }
+
+    @Test
+    void shouldNotCreateAPlayerWhenTheTeamDoesNotExist() {
+        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(false));
+
+        StepVerifier.create(facade.create(diego()))
+                .expectErrorMatches(t ->
+                        t instanceof TeamNotExistsException &&
+                                t.getMessage().equals("team Gremio does not exist")
+                ).verify();
+
+        verifyNoInteractions(playerRepository);
+    }
+
+    @Test
+    void shouldNotUpdateATeamThatDoesNotExist() {
+        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(false));
+
+        StepVerifier.create(facade.update("id1", diego()))
+                .expectErrorMatches(t ->
+                        t instanceof TeamNotExistsException &&
+                                t.getMessage().equals("team Gremio does not exist")
+                ).verify();
+
+        verifyNoInteractions(playerRepository);
     }
 }

@@ -4,10 +4,13 @@ import io.henriquels25.fantasysport.annotations.IntegrationTest;
 import io.henriquels25.fantasysport.infra.ErrorTestDTO;
 import io.henriquels25.fantasysport.player.Player;
 import io.henriquels25.fantasysport.player.PlayerFacade;
+import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
+import io.henriquels25.fantasysport.player.exception.TeamServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -187,5 +190,32 @@ class PlayerControllerTest {
                 .jsonPath("$.details[0].description").isEqualTo("must be null");
 
         verifyNoInteractions(playerFacade);
+    }
+
+    @IntegrationTest
+    void shouldReturn503WhenTeamServiceIsUnavailable() {
+        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(TeamServiceUnavailableException::new));
+
+        webTestClient.post().uri("/players")
+                .bodyValue(diegoWithId(null))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.SERVICE_UNAVAILABLE)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("team_api_unavailable")
+                .jsonPath("$.description").isEqualTo("Teams API is not available");
+    }
+
+    @IntegrationTest
+    void shouldReturn400WhenTeamDoesNotExist() {
+        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(() ->
+                new TeamNotExistsException("Team test does not exist")));
+
+        webTestClient.post().uri("/players")
+                .bodyValue(diegoWithId(null))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+                .expectBody()
+                .jsonPath("$.code").isEqualTo("invalid_team")
+                .jsonPath("$.description").isEqualTo("Team test does not exist");
     }
 }
