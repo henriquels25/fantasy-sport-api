@@ -116,7 +116,7 @@ class MongoPlayerRepositoryTest {
 
     private Player toPlayer(PlayerDocument document) {
         return new Player(document.getId(), document.getName(),
-                document.getPosition(), document.getTeam());
+                document.getPosition(), document.getTeamId());
     }
 
 }

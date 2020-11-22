@@ -19,13 +19,13 @@ public class PlayerFacade {
     }
 
     public Mono<String> create(Player player) {
-        return teamClient.exists(player.getTeam())
+        return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
                 .flatMap(b -> playerRepository.save(player));
     }
 
     public Mono<Void> update(String id, Player player) {
-        return teamClient.exists(player.getTeam())
+        return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
                 .flatMap(p -> playerRepository.update(id, player));
     }
@@ -41,7 +41,7 @@ public class PlayerFacade {
     private boolean validateIfTeamExists(boolean exists, Player player) {
         if (!exists) {
             throw new TeamNotExistsException
-                    (String.format("team %s does not exist", player.getTeam()));
+                    (String.format("team %s does not exist", player.getTeamId()));
         }
         return true;
     }

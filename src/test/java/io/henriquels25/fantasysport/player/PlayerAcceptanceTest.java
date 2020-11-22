@@ -44,11 +44,11 @@ class PlayerAcceptanceTest {
                 .jsonPath("[0].id").isEqualTo(idHenrique)
                 .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
-                .jsonPath("[0].team").isEqualTo("Gremio")
+                .jsonPath("[0].teamId").isEqualTo("idGremio")
                 .jsonPath("[1].id").isEqualTo(idFernando)
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
-                .jsonPath("[1].team", equalTo("Barcelona"));
+                .jsonPath("[1].teamId", equalTo("idBarcelona"));
 
         webClient.post().uri("/players")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,9 +73,9 @@ class PlayerAcceptanceTest {
                 .jsonPath("$").value(hasSize(1))
                 .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
-                .jsonPath("[0].team").isEqualTo("Gremio");
+                .jsonPath("[0].teamId").isEqualTo("idGremio");
 
-        Player player = new Player(null, "updatedName", "CF", "Internacional");
+        Player player = new Player(null, "updatedName", "CF", "idInternacional");
 
         webClient.put().uri("/players/{id}", id).bodyValue(player)
                 .exchange().expectStatus().isNoContent();
@@ -87,7 +87,7 @@ class PlayerAcceptanceTest {
                 .jsonPath("$").value(hasSize(1))
                 .jsonPath("[0].name").isEqualTo("updatedName")
                 .jsonPath("[0].position").isEqualTo("CF")
-                .jsonPath("[0].team").isEqualTo("Internacional");
+                .jsonPath("[0].teamId").isEqualTo("idInternacional");
     }
 
     @DisplayName("As a user, I want to delete a player")
@@ -123,7 +123,19 @@ class PlayerAcceptanceTest {
                 .jsonPath("$.id").isEqualTo(idHenrique)
                 .jsonPath("$.name").isEqualTo("Henrique")
                 .jsonPath("$.position").isEqualTo("GK")
-                .jsonPath("$.team").isEqualTo("Gremio");
+                .jsonPath("$.teamId").isEqualTo("idGremio");
+    }
+
+    @DisplayName("As a user, I should not be able to create a player with an invalid team")
+    @AcceptanceTest
+    void createPlayerWithInvalidTeam() {
+        Player player = new Player(null, "test", "CF",
+                "idInvalid");
+
+        webClient.post().uri("/players")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(player)
+                .exchange().expectStatus().isBadRequest();
     }
 
 

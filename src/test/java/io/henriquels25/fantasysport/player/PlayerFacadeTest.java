@@ -39,7 +39,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldSaveANewPlayer() {
-        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(true));
+        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.save(diego())).thenReturn(Mono.just("id1"));
 
@@ -53,7 +53,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldUpdateAPlayer() {
-        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(true));
+        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.update("id1", diego())).thenReturn(Mono.empty());
 
@@ -89,12 +89,12 @@ class PlayerFacadeTest {
 
     @Test
     void shouldNotCreateAPlayerWhenTheTeamDoesNotExist() {
-        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(false));
+        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(false));
 
         StepVerifier.create(facade.create(diego()))
                 .expectErrorMatches(t ->
                         t instanceof TeamNotExistsException &&
-                                t.getMessage().equals("team Gremio does not exist")
+                                t.getMessage().equals("team idGremio does not exist")
                 ).verify();
 
         verifyNoInteractions(playerRepository);
@@ -102,12 +102,12 @@ class PlayerFacadeTest {
 
     @Test
     void shouldNotUpdateATeamThatDoesNotExist() {
-        when(teamClient.exists(diego().getTeam())).thenReturn(Mono.just(false));
+        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(false));
 
         StepVerifier.create(facade.update("id1", diego()))
                 .expectErrorMatches(t ->
                         t instanceof TeamNotExistsException &&
-                                t.getMessage().equals("team Gremio does not exist")
+                                t.getMessage().equals("team idGremio does not exist")
                 ).verify();
 
         verifyNoInteractions(playerRepository);

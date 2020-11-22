@@ -1,6 +1,6 @@
 {
   "request": {
-    "urlPath": "/teams/Barcelona"
+    "urlPath": "/teams/idBarcelona"
   },
   "response": {
     "status": 200,

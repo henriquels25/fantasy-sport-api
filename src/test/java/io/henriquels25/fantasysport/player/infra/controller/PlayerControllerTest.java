@@ -40,11 +40,11 @@ class PlayerControllerTest {
                 .jsonPath("[0].id").isEqualTo("idHenrique")
                 .jsonPath("[0].name").isEqualTo("Henrique")
                 .jsonPath("[0].position").isEqualTo("GK")
-                .jsonPath("[0].team").isEqualTo("Gremio")
+                .jsonPath("[0].teamId").isEqualTo("idGremio")
                 .jsonPath("[1].id").isEqualTo("idFernando")
                 .jsonPath("[1].name").isEqualTo("Fernando")
                 .jsonPath("[1].position").isEqualTo("CF")
-                .jsonPath("[1].team", equalTo("Barcelona"));
+                .jsonPath("[1].teamId", equalTo("idBarcelona"));
     }
 
     @IntegrationTest
@@ -93,7 +93,7 @@ class PlayerControllerTest {
                 .jsonPath("$.id").isEqualTo("idHenrique")
                 .jsonPath("$.name").isEqualTo("Henrique")
                 .jsonPath("$.position").isEqualTo("GK")
-                .jsonPath("$.team").isEqualTo("Gremio");
+                .jsonPath("$.teamId").isEqualTo("idGremio");
 
         verify(playerFacade).findById("idHenrique");
     }
@@ -123,7 +123,7 @@ class PlayerControllerTest {
         ErrorTestDTO.ErrorTestDetailDTO positionError =
                 new ErrorTestDTO.ErrorTestDetailDTO("position", "must not be empty");
         ErrorTestDTO.ErrorTestDetailDTO teamError =
-                new ErrorTestDTO.ErrorTestDetailDTO("team", "must not be empty");
+                new ErrorTestDTO.ErrorTestDetailDTO("teamId", "must not be empty");
 
         webTestClient
                 .post().uri("/players")

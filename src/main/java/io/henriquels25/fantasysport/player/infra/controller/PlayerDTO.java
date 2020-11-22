@@ -15,5 +15,5 @@ class PlayerDTO {
     @NotEmpty
     private String position;
     @NotEmpty
-    private String team;
+    private String teamId;
 }

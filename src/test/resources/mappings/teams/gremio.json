@@ -1,6 +1,6 @@
 {
   "request": {
-    "urlPath": "/teams/Gremio"
+    "urlPath": "/teams/idGremio"
   },
   "response": {
     "status": 200,
