@@ -23,6 +23,9 @@ class PlayerFacadeTest {
     @Mock
     private TeamClient teamClient;
 
+    @Mock
+    private PlayerNotification playerNotification;
+
     @InjectMocks
     private PlayerFacade facade;
 
@@ -42,6 +45,7 @@ class PlayerFacadeTest {
         when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.save(diego())).thenReturn(Mono.just("id1"));
+        when(playerNotification.notificateCreated(diegoWithId("id1"))).thenReturn(Mono.empty());
 
         StepVerifier.create(facade.create(diego()))
                 .expectNext("id1")
@@ -49,6 +53,7 @@ class PlayerFacadeTest {
                 .verify();
 
         verify(playerRepository).save(diego());
+        verify(playerNotification).notificateCreated(diegoWithId("id1"));
     }
 
     @Test
@@ -56,12 +61,14 @@ class PlayerFacadeTest {
         when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.update("id1", diego())).thenReturn(Mono.empty());
+        when(playerNotification.notificateUpdated(diegoWithId("id1"))).thenReturn(Mono.empty());
 
         StepVerifier.create(facade.update("id1", diego()))
                 .expectComplete()
                 .verify();
 
         verify(playerRepository).update("id1", diego());
+        verify(playerNotification).notificateUpdated(diegoWithId("id1"));
     }
 
 
@@ -98,6 +105,7 @@ class PlayerFacadeTest {
                 ).verify();
 
         verifyNoInteractions(playerRepository);
+        verifyNoInteractions(playerNotification);
     }
 
     @Test
@@ -111,5 +119,6 @@ class PlayerFacadeTest {
                 ).verify();
 
         verifyNoInteractions(playerRepository);
+        verifyNoInteractions(playerNotification);
     }
 }

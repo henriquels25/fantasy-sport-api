@@ -2,13 +2,15 @@ package io.henriquels25.fantasysport.player;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Player {
+@Builder(toBuilder = true, builderMethodName = "")
+public final class Player {
 
     private final String id;
     private final String name;

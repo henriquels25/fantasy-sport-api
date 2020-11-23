@@ -13,6 +13,7 @@ public class PlayerFacade {
 
     private final PlayerRepository playerRepository;
     private final TeamClient teamClient;
+    private final PlayerNotification playerNotification;
 
     public Flux<Player> allPlayers() {
         return playerRepository.findAll();
@@ -21,13 +22,15 @@ public class PlayerFacade {
     public Mono<String> create(Player player) {
         return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
-                .flatMap(b -> playerRepository.save(player));
+                .flatMap(b -> playerRepository.save(player))
+                .flatMap(id -> playerNotification.notificateCreated(playerWithId(player, id)).thenReturn(id));
     }
 
     public Mono<Void> update(String id, Player player) {
         return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
-                .flatMap(p -> playerRepository.update(id, player));
+                .flatMap(p -> playerRepository.update(id, player))
+                .then(Mono.defer(() -> playerNotification.notificateUpdated(playerWithId(player, id))));
     }
 
     public Mono<Void> delete(String id) {
@@ -44,5 +47,9 @@ public class PlayerFacade {
                     (String.format("team %s does not exist", player.getTeamId()));
         }
         return true;
+    }
+
+    private Player playerWithId(Player player, String id) {
+        return player.toBuilder().id(id).build();
     }
 }
