@@ -7,11 +7,13 @@ import org.springframework.boot.autoconfigure.web.reactive.function.client.WebCl
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @SpringBootTest(classes = WebClientAutoConfiguration.class)
+@ActiveProfiles("test")
 @Import(RestTeamClient.class)
 @AutoConfigureWireMock(port = 0)
 class RestTeamClientTest {
