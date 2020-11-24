@@ -3,7 +3,7 @@ package io.henriquels25.fantasysport.player.infra.controller;
 import io.henriquels25.fantasysport.annotations.IntegrationTest;
 import io.henriquels25.fantasysport.infra.ErrorTestDTO;
 import io.henriquels25.fantasysport.player.Player;
-import io.henriquels25.fantasysport.player.PlayerFacade;
+import io.henriquels25.fantasysport.player.PlayerOperations;
 import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
 import io.henriquels25.fantasysport.player.exception.TeamServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ class PlayerControllerTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private PlayerFacade playerFacade;
+    private PlayerOperations playerOperations;
 
     @IntegrationTest
     void shouldReturnTheListOfPlayers() {
-        when(playerFacade.allPlayers()).thenReturn(Flux.just(henrique(), fernando()));
+        when(playerOperations.allPlayers()).thenReturn(Flux.just(henrique(), fernando()));
 
         webTestClient.get().uri("/players")
                 .exchange()
@@ -49,7 +49,7 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldCreateAPlayer() {
-        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.just("id1"));
+        when(playerOperations.create(diegoWithId(null))).thenReturn(Mono.just("id1"));
 
         webTestClient.post().uri("/players")
                 .bodyValue(diegoWithId(null))
@@ -61,30 +61,30 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldUpdateAPlayer() {
-        when(playerFacade.update("id1", diegoWithId(null))).thenReturn(Mono.empty());
+        when(playerOperations.update("id1", diegoWithId(null))).thenReturn(Mono.empty());
 
         webTestClient.put().uri("/players/{id}", "id1")
                 .bodyValue(diegoWithId(null))
                 .exchange()
                 .expectStatus().isNoContent();
 
-        verify(playerFacade).update("id1", diegoWithId(null));
+        verify(playerOperations).update("id1", diegoWithId(null));
     }
 
     @IntegrationTest
     void shouldDeleteAPlayer() {
-        when(playerFacade.delete("id1")).thenReturn(Mono.empty());
+        when(playerOperations.delete("id1")).thenReturn(Mono.empty());
 
         webTestClient.delete().uri("/players/{id}", "id1")
                 .exchange()
                 .expectStatus().isNoContent();
 
-        verify(playerFacade).delete("id1");
+        verify(playerOperations).delete("id1");
     }
 
     @IntegrationTest
     void shouldFindAPlayer() {
-        when(playerFacade.findById("idHenrique")).thenReturn(Mono.just(henrique()));
+        when(playerOperations.findById("idHenrique")).thenReturn(Mono.just(henrique()));
 
         webTestClient.get().uri("/players/{id}", "idHenrique")
                 .exchange()
@@ -95,7 +95,7 @@ class PlayerControllerTest {
                 .jsonPath("$.position").isEqualTo("GK")
                 .jsonPath("$.teamId").isEqualTo("idGremio");
 
-        verify(playerFacade).findById("idHenrique");
+        verify(playerOperations).findById("idHenrique");
     }
 
     @IntegrationTest
@@ -114,7 +114,7 @@ class PlayerControllerTest {
                 .jsonPath("$.details[0].name").isEqualTo("name")
                 .jsonPath("$.details[0].description").isEqualTo("must not be empty");
 
-        verifyNoInteractions(playerFacade);
+        verifyNoInteractions(playerOperations);
     }
 
     @IntegrationTest
@@ -134,7 +134,7 @@ class PlayerControllerTest {
                 .value(ErrorTestDTO::getCode, equalTo("field_validation_error"))
                 .value(ErrorTestDTO::getDetails, containsInAnyOrder(teamError, positionError));
 
-        verifyNoInteractions(playerFacade);
+        verifyNoInteractions(playerOperations);
     }
 
     @IntegrationTest
@@ -154,7 +154,7 @@ class PlayerControllerTest {
                 .value(ErrorTestDTO::getCode, equalTo("field_validation_error"))
                 .value(ErrorTestDTO::getDetails, containsInAnyOrder(nameError, positionError));
 
-        verifyNoInteractions(playerFacade);
+        verifyNoInteractions(playerOperations);
     }
 
 
@@ -172,7 +172,7 @@ class PlayerControllerTest {
                 .jsonPath("$.details[0].name").isEqualTo("id")
                 .jsonPath("$.details[0].description").isEqualTo("must be null");
 
-        verifyNoInteractions(playerFacade);
+        verifyNoInteractions(playerOperations);
     }
 
     @IntegrationTest
@@ -189,12 +189,12 @@ class PlayerControllerTest {
                 .jsonPath("$.details[0].name").isEqualTo("id")
                 .jsonPath("$.details[0].description").isEqualTo("must be null");
 
-        verifyNoInteractions(playerFacade);
+        verifyNoInteractions(playerOperations);
     }
 
     @IntegrationTest
     void shouldReturn503WhenTeamServiceIsUnavailable() {
-        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(TeamServiceUnavailableException::new));
+        when(playerOperations.create(diegoWithId(null))).thenReturn(Mono.error(TeamServiceUnavailableException::new));
 
         webTestClient.post().uri("/players")
                 .bodyValue(diegoWithId(null))
@@ -207,7 +207,7 @@ class PlayerControllerTest {
 
     @IntegrationTest
     void shouldReturn400WhenTeamDoesNotExist() {
-        when(playerFacade.create(diegoWithId(null))).thenReturn(Mono.error(() ->
+        when(playerOperations.create(diegoWithId(null))).thenReturn(Mono.error(() ->
                 new TeamNotExistsException("Team test does not exist")));
 
         webTestClient.post().uri("/players")
