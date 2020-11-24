@@ -9,16 +9,18 @@ import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Service
-public class PlayerFacade {
+class PlayerFacade implements PlayerOperations {
 
     private final PlayerRepository playerRepository;
     private final TeamClient teamClient;
     private final PlayerNotification playerNotification;
 
+    @Override
     public Flux<Player> allPlayers() {
         return playerRepository.findAll();
     }
 
+    @Override
     public Mono<String> create(Player player) {
         return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
@@ -26,6 +28,7 @@ public class PlayerFacade {
                 .flatMap(id -> playerNotification.notificateCreated(playerWithId(player, id)).thenReturn(id));
     }
 
+    @Override
     public Mono<Void> update(String id, Player player) {
         return teamClient.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
@@ -33,10 +36,12 @@ public class PlayerFacade {
                 .then(Mono.defer(() -> playerNotification.notificateUpdated(playerWithId(player, id))));
     }
 
+    @Override
     public Mono<Void> delete(String id) {
         return playerRepository.delete(id);
     }
 
+    @Override
     public Mono<Player> findById(String id) {
         return playerRepository.findById(id);
     }
