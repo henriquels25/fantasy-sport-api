@@ -1,7 +1,6 @@
 package io.henriquels25.fantasysport.player;
 
 import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
-import io.henriquels25.fantasysport.player.infra.client.TeamClient;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -12,7 +11,7 @@ import reactor.core.publisher.Mono;
 class PlayerFacade implements PlayerOperations {
 
     private final PlayerRepository playerRepository;
-    private final TeamClient teamClient;
+    private final TeamRepository teamRepository;
     private final PlayerNotification playerNotification;
 
     @Override
@@ -22,7 +21,7 @@ class PlayerFacade implements PlayerOperations {
 
     @Override
     public Mono<String> create(Player player) {
-        return teamClient.exists(player.getTeamId())
+        return teamRepository.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
                 .flatMap(b -> playerRepository.save(player))
                 .flatMap(id -> playerNotification.notificateCreated(playerWithId(player, id)).thenReturn(id));
@@ -30,7 +29,7 @@ class PlayerFacade implements PlayerOperations {
 
     @Override
     public Mono<Void> update(String id, Player player) {
-        return teamClient.exists(player.getTeamId())
+        return teamRepository.exists(player.getTeamId())
                 .map(exists -> this.validateIfTeamExists(exists, player))
                 .flatMap(p -> playerRepository.update(id, player))
                 .then(Mono.defer(() -> playerNotification.notificateUpdated(playerWithId(player, id))));

@@ -1,7 +1,6 @@
 package io.henriquels25.fantasysport.player;
 
 import io.henriquels25.fantasysport.player.exception.TeamNotExistsException;
-import io.henriquels25.fantasysport.player.infra.client.TeamClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +20,7 @@ class PlayerFacadeTest {
     private PlayerRepository playerRepository;
 
     @Mock
-    private TeamClient teamClient;
+    private TeamRepository teamRepository;
 
     @Mock
     private PlayerNotification playerNotification;
@@ -42,7 +41,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldSaveANewPlayer() {
-        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
+        when(teamRepository.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.save(diego())).thenReturn(Mono.just("id1"));
         when(playerNotification.notificateCreated(diegoWithId("id1"))).thenReturn(Mono.empty());
@@ -58,7 +57,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldUpdateAPlayer() {
-        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(true));
+        when(teamRepository.exists(diego().getTeamId())).thenReturn(Mono.just(true));
 
         when(playerRepository.update("id1", diego())).thenReturn(Mono.empty());
         when(playerNotification.notificateUpdated(diegoWithId("id1"))).thenReturn(Mono.empty());
@@ -96,7 +95,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldNotCreateAPlayerWhenTheTeamDoesNotExist() {
-        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(false));
+        when(teamRepository.exists(diego().getTeamId())).thenReturn(Mono.just(false));
 
         StepVerifier.create(facade.create(diego()))
                 .expectErrorMatches(t ->
@@ -110,7 +109,7 @@ class PlayerFacadeTest {
 
     @Test
     void shouldNotUpdateATeamThatDoesNotExist() {
-        when(teamClient.exists(diego().getTeamId())).thenReturn(Mono.just(false));
+        when(teamRepository.exists(diego().getTeamId())).thenReturn(Mono.just(false));
 
         StepVerifier.create(facade.update("id1", diego()))
                 .expectErrorMatches(t ->
