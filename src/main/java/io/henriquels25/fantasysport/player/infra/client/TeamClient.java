@@ -9,11 +9,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-class RestTeamRepository implements TeamRepository {
+class TeamClient implements TeamRepository {
     private final WebClient webClient;
 
-    public RestTeamRepository(WebClient.Builder webClientBuilder,
-                              @Value("${services.teams.url}") String baseUrl) {
+    public TeamClient(WebClient.Builder webClientBuilder,
+                      @Value("${services.teams.url}") String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 

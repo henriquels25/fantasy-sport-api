@@ -15,9 +15,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @SpringBootTest(classes = WebClientAutoConfiguration.class)
 @ActiveProfiles("test")
-@Import(RestTeamRepository.class)
+@Import(TeamClient.class)
 @AutoConfigureWireMock(port = 0)
-class RestTeamRepositoryTest {
+class TeamClientTest {
 
     @Autowired
     private TeamRepository client;
