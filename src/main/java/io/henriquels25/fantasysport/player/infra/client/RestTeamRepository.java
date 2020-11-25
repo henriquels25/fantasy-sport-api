@@ -1,5 +1,6 @@
 package io.henriquels25.fantasysport.player.infra.client;
 
+import io.henriquels25.fantasysport.player.TeamRepository;
 import io.henriquels25.fantasysport.player.exception.TeamServiceUnavailableException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,11 +9,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-class RestTeamClient implements TeamClient {
+class RestTeamRepository implements TeamRepository {
     private final WebClient webClient;
 
-    public RestTeamClient(WebClient.Builder webClientBuilder,
-                          @Value("${services.teams.url}") String baseUrl) {
+    public RestTeamRepository(WebClient.Builder webClientBuilder,
+                              @Value("${services.teams.url}") String baseUrl) {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
