@@ -1,6 +1,5 @@
 package io.henriquels25.fantasysport.player.infra.client;
 
-import io.henriquels25.fantasysport.player.TeamRepository;
 import io.henriquels25.fantasysport.player.exception.TeamServiceUnavailableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +14,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @SpringBootTest(classes = WebClientAutoConfiguration.class)
 @ActiveProfiles("test")
-@Import(RestTeamRepository.class)
+@Import(TeamClient.class)
 @AutoConfigureWireMock(port = 0)
-class RestTeamRepositoryTest {
+class TeamClientTest {
 
     @Autowired
-    private TeamRepository client;
+    private TeamClient client;
 
     @Test
     void shouldReturnTrueWhenTeamExists() {
