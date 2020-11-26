@@ -19,12 +19,11 @@ public class KafkaTestHelper {
         ConsumerFactory<String, String> cf = new DefaultKafkaConsumerFactory<>(consumerProps);
         Consumer<String, String> consumer = cf.createConsumer();
         embeddedKafka.consumeFromAnEmbeddedTopic(consumer, topic);
-        KafkaTestUtils.getRecords(consumer, 10).records("player-events-v1");
+        KafkaTestUtils.getRecords(consumer, 10).records(topic);
         return consumer;
     }
 
     public static ConsumerRecord<String, String> getNextRecord(Consumer<String, String> consumer) {
         return KafkaTestUtils.getRecords(consumer).records("player-events-v1").iterator().next();
-
     }
 }
