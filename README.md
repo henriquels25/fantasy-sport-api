@@ -1,5 +1,3 @@
-[:brazil: Portuguese-BR version](README-pt-BR.md)
-
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=code_smells)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=coverage)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
@@ -15,6 +13,9 @@ Fantasy Sport API
 ===============
 Application to manage Fantasy Sport games, enabling the users to search players, pick their squads
 and participate in championships.
+
+## Portuguese version
+This document is also available in [:brazil: Portuguese](README-pt-BR.md).
 
 ## Purpose
 This application is for educational purposes and the goal is to show good practices of

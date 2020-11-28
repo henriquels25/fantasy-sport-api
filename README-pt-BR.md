@@ -1,5 +1,3 @@
-[:us: English version](README.md)
-
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=code_smells)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=coverage)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
@@ -15,6 +13,9 @@ Fantasy Sport API
 ===============
 Aplicação para gerenciar aplicações Fantasy, possibilitando aos usuários procurar jogadores, escalar os seus times
 e participar de campeonatos.
+
+## Versão em inglês
+Este documento também está disponível em [:us: Inglês](README.md).
 
 ## Propósito
 Esta aplicação serve para propósitos educacionais e o objetivo é mostrar boas práticas de 
