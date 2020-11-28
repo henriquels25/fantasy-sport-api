@@ -14,6 +14,9 @@ Fantasy Sport API
 Application to manage Fantasy Sport games, enabling the users to search players, pick their squads
 and participate in championships.
 
+## Portuguese version
+This document is also available in [:brazil: Portuguese](README-pt-BR.md).
+
 ## Purpose
 This application is for educational purposes and the goal is to show good practices of
 software architecture and testing.
@@ -28,7 +31,7 @@ This project is written using the [JDK 15](https://jdk.java.net/15/) Platform,
 This application uses the [Hexagonal Architecture](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software))
 as the architectural style.
 
-Following this, the application is split in three parts:
+Following this, the application modules are split in three parts:
 
 * **Business Logic (Core)**: Code that contains pure business logic, with minimal coupling
 to frameworks, databases or messaging systems. Whenever the application needs to 
@@ -67,10 +70,10 @@ The adapters are placed on packages according to their types. Controllers are pu
 package `**.infra.controller`, adapters to Mongo documents on `**.infra.mongo`, etc.
 
 ##### Primary Adapters
-Primary adapters should depend on an entry point to the module business logic (core).
+Primary adapters should depend on an entry point (primary port) to the module business logic (core).
 
 Example:
-The primary adapter `PlayerController` depends on the `PlayerFacade` (entry point to the business logic).
+The primary adapter `PlayerController` depends on the `PlayerOperations` (entry point to the business logic).
 
 ##### Secondary Adapters
 Secondary adapters should implement output ports that are defined in the module business logic (core).
@@ -95,7 +98,7 @@ Usually, annotation like `@WebFluxTest`, `@DataMongoTest` and others are used.
 For code coverage purposes, only the unit and integration tests should be considered.
 
 ### Special Annotations
-In order to have separate tasks for each kind of test, the following annotations should be used when defining
+In order to have separate Gradle tasks for each kind of test, the following annotations should be used when defining
 tests:
 
 * **Unit Test**: `@Test` (org.junit.jupiter.api.Test)
@@ -103,7 +106,7 @@ tests:
 * **Acceptance test**: `@AcceptanceTest` (io.henriquels25.fantasysport.annotations.AcceptanceTest)
 
 ### Gradle Tasks
-The following gradle tasks are available to run the tests:
+The following Gradle tasks are available to run the tests:
 * **Unit Test**: `./gradlew unitTest`
 * **Integration Test**: `./gradlew integrationTest`
 * **Acceptance test**: `./gradlew acceptanceTest`
