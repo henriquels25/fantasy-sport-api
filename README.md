@@ -1,4 +1,4 @@
-:brazil: [:brazil: Portuguese-BR version](README-pt-BR.md)
+[:brazil: Portuguese-BR version](README-pt-BR.md)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=henriquels25_fantasy-sport-api&metric=code_smells)](https://sonarcloud.io/dashboard?id=henriquels25_fantasy-sport-api)
